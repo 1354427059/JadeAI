@@ -242,6 +242,7 @@
   "themeEditor": {
     "title": "Theme Editor",
     "reset": "Reset Theme",
+    "templateSection": "Template",
     "presets": "Presets",
     "preset": {
       "classic": "Classic",

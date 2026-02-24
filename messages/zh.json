@@ -242,6 +242,7 @@
   "themeEditor": {
     "title": "主题编辑",
     "reset": "重置主题",
+    "templateSection": "切换模板",
     "presets": "预设主题",
     "preset": {
       "classic": "经典",

@@ -10,6 +10,8 @@ import {
   ChevronDown,
   ChevronRight,
   RotateCcw,
+  LayoutGrid,
+  Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -30,6 +32,10 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { useResumeStore } from '@/stores/resume-store';
+import { TEMPLATES } from '@/lib/constants';
+import { templateLabelsMap } from '@/lib/template-labels';
+import { TemplateThumbnail } from '@/components/dashboard/template-thumbnail';
+import { cn } from '@/lib/utils';
 import type { ThemeConfig } from '@/types/resume';
 
 // -- Preset Themes --
@@ -241,6 +247,7 @@ interface ThemeEditorProps {
 
 export function ThemeEditor({ onClose }: ThemeEditorProps) {
   const t = useTranslations('themeEditor');
+  const tRoot = useTranslations();
   const { currentResume } = useResumeStore();
 
   const themeConfig: ThemeConfig = {
@@ -275,6 +282,13 @@ export function ThemeEditor({ onClose }: ThemeEditorProps) {
     updateTheme(DEFAULT_THEME);
   }, [updateTheme]);
 
+  const handleTemplateSwitch = useCallback(
+    (tpl: string) => {
+      useResumeStore.getState().setTemplate(tpl);
+    },
+    []
+  );
+
   // Build font size label dynamically
   const fontSizeLabels: Record<string, string> = {
     small: t('fontSize.small'),
@@ -303,6 +317,50 @@ export function ThemeEditor({ onClose }: ThemeEditorProps) {
 
       <ScrollArea className="flex-1">
         <div className="px-4 py-3 space-y-1">
+          {/* Template Switcher */}
+          <ThemeSection icon={LayoutGrid} title={t('templateSection')} defaultOpen={false}>
+            <div className="grid max-h-[320px] grid-cols-3 gap-2 overflow-y-auto pr-1">
+              {TEMPLATES.map((tpl) => {
+                const isSelected = currentResume?.template === tpl;
+                return (
+                  <button
+                    key={tpl}
+                    type="button"
+                    className={cn(
+                      'group/tpl relative cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-200',
+                      isSelected
+                        ? 'border-pink-500 shadow-sm shadow-pink-500/10'
+                        : 'border-zinc-200 hover:border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600'
+                    )}
+                    onClick={() => handleTemplateSwitch(tpl)}
+                  >
+                    <div className="relative bg-zinc-50 p-1 dark:bg-zinc-800/50">
+                      <TemplateThumbnail
+                        template={tpl}
+                        className="mx-auto h-[56px] w-[40px] shadow-sm ring-1 ring-zinc-200/50"
+                      />
+                      {isSelected && (
+                        <div className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 text-white shadow-sm">
+                          <Check className="h-2.5 w-2.5" />
+                        </div>
+                      )}
+                    </div>
+                    <div className={cn(
+                      'truncate px-1 py-0.5 text-center text-[10px] font-medium transition-colors',
+                      isSelected
+                        ? 'bg-pink-50 text-pink-700 dark:bg-pink-950/30 dark:text-pink-300'
+                        : 'text-zinc-500 dark:text-zinc-400'
+                    )}>
+                      {tRoot(templateLabelsMap[tpl])}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </ThemeSection>
+
+          <Separator />
+
           {/* Preset Themes */}
           <ThemeSection icon={Sparkles} title={t('presets')}>
             <div className="grid grid-cols-3 gap-2">
