@@ -1,7 +1,17 @@
 import puppeteer from 'puppeteer-core';
 
 async function getBrowser() {
-  if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+  // Docker / self-hosted: use system Chromium via CHROME_PATH
+  if (process.env.CHROME_PATH) {
+    return puppeteer.launch({
+      executablePath: process.env.CHROME_PATH,
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
+      headless: true,
+    });
+  }
+
+  // Vercel serverless: use @sparticuz/chromium bundled binary
+  if (process.env.VERCEL) {
     const chromium = await import('@sparticuz/chromium');
     return puppeteer.launch({
       args: chromium.default.args,
