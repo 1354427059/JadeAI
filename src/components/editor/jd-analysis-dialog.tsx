@@ -14,6 +14,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -255,6 +265,7 @@ function JdAnalysisResultView({ result, jobDescription, t }: { result: JdAnalysi
 
 export function JdAnalysisDialog({ open, onOpenChange, resumeId }: JdAnalysisDialogProps) {
   const t = useTranslations('jdAnalysis');
+  const ct = useTranslations('common');
   const { setShowAiChat, setPendingAiMessage } = useEditorStore();
   const [jobDescription, setJobDescription] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -268,6 +279,7 @@ export function JdAnalysisDialog({ open, onOpenChange, resumeId }: JdAnalysisDia
   const [historyDetail, setHistoryDetail] = useState<JdAnalysisResult | null>(null);
   const [historyDetailJd, setHistoryDetailJd] = useState<string>('');
   const [historyDetailLoading, setHistoryDetailLoading] = useState(false);
+  const [deleteToConfirm, setDeleteToConfirm] = useState<string | null>(null);
 
   const fingerprint = typeof window !== 'undefined' ? localStorage.getItem('jade_fingerprint') : null;
   const authHeaders = {
@@ -364,7 +376,6 @@ export function JdAnalysisDialog({ open, onOpenChange, resumeId }: JdAnalysisDia
   };
 
   const handleDeleteHistory = async (id: string) => {
-    if (!confirm(t('deleteConfirm'))) return;
     try {
       await fetch(`/api/ai/jd-analysis/history?id=${id}`, {
         method: 'DELETE',
@@ -378,6 +389,7 @@ export function JdAnalysisDialog({ open, onOpenChange, resumeId }: JdAnalysisDia
   };
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl max-h-[85vh] p-0 gap-0 overflow-hidden flex flex-col">
         <DialogHeader className="px-6 pt-6 pb-0">
@@ -557,7 +569,7 @@ export function JdAnalysisDialog({ open, onOpenChange, resumeId }: JdAnalysisDia
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleDeleteHistory(item.id);
+                              setDeleteToConfirm(item.id);
                             }}
                             className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all cursor-pointer"
                           >
@@ -584,5 +596,27 @@ export function JdAnalysisDialog({ open, onOpenChange, resumeId }: JdAnalysisDia
         </Tabs>
       </DialogContent>
     </Dialog>
+
+    <AlertDialog open={!!deleteToConfirm} onOpenChange={(o) => { if (!o) setDeleteToConfirm(null); }}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t('deleteConfirm')}</AlertDialogTitle>
+          <AlertDialogDescription>{t('deleteConfirmDesc')}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel className="cursor-pointer">{ct('cancel')}</AlertDialogCancel>
+          <AlertDialogAction
+            className="bg-red-600 hover:bg-red-700 cursor-pointer"
+            onClick={() => {
+              if (deleteToConfirm) handleDeleteHistory(deleteToConfirm);
+              setDeleteToConfirm(null);
+            }}
+          >
+            {ct('delete')}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }

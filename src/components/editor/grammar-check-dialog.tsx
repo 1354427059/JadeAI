@@ -13,6 +13,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -218,6 +228,7 @@ function GrammarCheckResultView({ result, t }: { result: GrammarCheckResult; t: 
 
 export function GrammarCheckDialog({ open, onOpenChange, resumeId }: GrammarCheckDialogProps) {
   const t = useTranslations('grammarCheck');
+  const ct = useTranslations('common');
   const { setShowAiChat, setPendingAiMessage } = useEditorStore();
   const [isChecking, setIsChecking] = useState(false);
   const [result, setResult] = useState<GrammarCheckResult | null>(null);
@@ -229,6 +240,7 @@ export function GrammarCheckDialog({ open, onOpenChange, resumeId }: GrammarChec
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyDetail, setHistoryDetail] = useState<GrammarCheckResult | null>(null);
   const [historyDetailLoading, setHistoryDetailLoading] = useState(false);
+  const [deleteToConfirm, setDeleteToConfirm] = useState<string | null>(null);
 
   const fingerprint = typeof window !== 'undefined' ? localStorage.getItem('jade_fingerprint') : null;
   const authHeaders = {
@@ -312,7 +324,6 @@ export function GrammarCheckDialog({ open, onOpenChange, resumeId }: GrammarChec
   };
 
   const handleDeleteHistory = async (id: string) => {
-    if (!confirm(t('deleteConfirm'))) return;
     try {
       await fetch(`/api/ai/grammar-check/history?id=${id}`, {
         method: 'DELETE',
@@ -326,6 +337,7 @@ export function GrammarCheckDialog({ open, onOpenChange, resumeId }: GrammarChec
   };
 
   return (
+    <>
     <Dialog open={open} onOpenChange={(o) => { if (!o) handleClose(); }}>
       <DialogContent className="sm:max-w-2xl max-h-[85vh] p-0 gap-0 overflow-hidden flex flex-col">
         <DialogHeader className="px-6 pt-6 pb-0">
@@ -506,7 +518,7 @@ export function GrammarCheckDialog({ open, onOpenChange, resumeId }: GrammarChec
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleDeleteHistory(item.id);
+                              setDeleteToConfirm(item.id);
                             }}
                             className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all cursor-pointer"
                           >
@@ -533,5 +545,27 @@ export function GrammarCheckDialog({ open, onOpenChange, resumeId }: GrammarChec
         </Tabs>
       </DialogContent>
     </Dialog>
+
+    <AlertDialog open={!!deleteToConfirm} onOpenChange={(o) => { if (!o) setDeleteToConfirm(null); }}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t('deleteConfirm')}</AlertDialogTitle>
+          <AlertDialogDescription>{t('deleteConfirmDesc')}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel className="cursor-pointer">{ct('cancel')}</AlertDialogCancel>
+          <AlertDialogAction
+            className="bg-red-600 hover:bg-red-700 cursor-pointer"
+            onClick={() => {
+              if (deleteToConfirm) handleDeleteHistory(deleteToConfirm);
+              setDeleteToConfirm(null);
+            }}
+          >
+            {ct('delete')}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }
