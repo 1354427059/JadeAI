@@ -301,7 +301,16 @@
     "suggestedChange": "建议",
     "optimize": "一键优化",
     "pasteJd": "粘贴职位描述以开始分析",
-    "noResults": "暂无分析结果"
+    "noResults": "暂无分析结果",
+    "newAnalysis": "新分析",
+    "historyTab": "历史记录",
+    "noHistory": "暂无分析历史",
+    "deleteConfirm": "确定要删除这条记录吗？",
+    "deleted": "已删除",
+    "jdPreview": "JD 摘要",
+    "viewDetail": "查看详情",
+    "loadingHistory": "加载历史...",
+    "jobDescriptionLabel": "职位描述"
   },
   "translate": {
     "title": "AI 简历翻译",
@@ -387,7 +396,15 @@
     "checkAgain": "再次检查",
     "fixAll": "一键修复",
     "close": "关闭",
-    "error": "语法检查失败，请重试。"
+    "error": "语法检查失败，请重试。",
+    "newCheck": "新检查",
+    "historyTab": "历史记录",
+    "noHistory": "暂无检查历史",
+    "deleteConfirm": "确定要删除这条记录吗？",
+    "deleted": "已删除",
+    "issueCountLabel": "{count} 个问题",
+    "viewDetail": "查看详情",
+    "loadingHistory": "加载历史..."
   },
   "export": {
     "title": "导出简历",

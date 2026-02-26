@@ -301,7 +301,16 @@
     "suggestedChange": "Suggested",
     "optimize": "Optimize Resume",
     "pasteJd": "Paste a job description to get started",
-    "noResults": "No analysis results available"
+    "noResults": "No analysis results available",
+    "newAnalysis": "New Analysis",
+    "historyTab": "History",
+    "noHistory": "No analysis history yet",
+    "deleteConfirm": "Are you sure you want to delete this record?",
+    "deleted": "Record deleted",
+    "jdPreview": "JD Preview",
+    "viewDetail": "View Details",
+    "loadingHistory": "Loading history...",
+    "jobDescriptionLabel": "Job Description"
   },
   "translate": {
     "title": "AI Resume Translation",
@@ -387,7 +396,15 @@
     "checkAgain": "Check Again",
     "fixAll": "Fix All",
     "close": "Close",
-    "error": "Grammar check failed. Please try again."
+    "error": "Grammar check failed. Please try again.",
+    "newCheck": "New Check",
+    "historyTab": "History",
+    "noHistory": "No check history yet",
+    "deleteConfirm": "Are you sure you want to delete this record?",
+    "deleted": "Record deleted",
+    "issueCountLabel": "{count} issues",
+    "viewDetail": "View Details",
+    "loadingHistory": "Loading history..."
   },
   "export": {
     "title": "Export Resume",
